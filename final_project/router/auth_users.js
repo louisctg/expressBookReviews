@@ -51,10 +51,22 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   books[isbn].reviews[username] = review;
 
   if (update) {
-    return res.status(204).send("Book review updated");
+    return res.status(200).send("Book review updated");
   } else {
-    return res.status(204).send("Book review added");
+    return res.status(200).send("Book review added");
   }
+});
+
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+  const isbn = req.params.isbn;
+  const token = req.session.authorization["accessToken"];
+  const username = req.session.authorization["username"];
+  if (!books[isbn]) {
+    return res.status(404).send("Book not found");
+  }
+
+  delete books[isbn].reviews[username];
+  return res.status(200).send("Book review deleted");
 });
 
 module.exports.authenticated = regd_users;
